@@ -24,10 +24,9 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         id: artifact-upload-step
-        name: 'vite build'
         with:
           path: './dist'
-        if-no-files-found: error
-        retention-days: 1
+          if-no-files-found: error
+          retention-days: 1
       - name: Output artifact ID
-      run:  echo 'Artifact ID is ${{ steps.artifact-upload-step.outputs.artifact-id }}
+        run:  echo 'Artifact ID is ${{ steps.artifact-upload-step.outputs.artifact-id }}
