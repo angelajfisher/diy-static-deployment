@@ -28,5 +28,3 @@ jobs:
           path: './dist'
           if-no-files-found: error
           retention-days: 1
-      - name: Output artifact ID
-        run:  echo 'Artifact ID is ${{ steps.artifact-upload-step.outputs.artifact-id }}
