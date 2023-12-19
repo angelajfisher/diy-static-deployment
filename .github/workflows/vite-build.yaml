@@ -35,4 +35,4 @@ jobs:
       env:
         webhook_url: ${{ secrets.WEBHOOK_URL }}
         webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
-        data: '{"artifact-id: ${{ steps.my-artifact.outputs.artifact-id }}"}'
+        data: '{"artifact-id": "${{ steps.my-artifact.outputs.artifact-id }}"}'
