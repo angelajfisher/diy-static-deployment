@@ -29,10 +29,11 @@ jobs:
           if-no-files-found: error
           retention-days: 1
   ping-server:
+    runs-on: composite
     steps:
       - name: Invoke Webhook
-      uses: johannes-huther/webhook.sh@v1
-      env:
-        webhook_url: ${{ secrets.WEBHOOK_URL }}
-        webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
-        data: '{"artifact-id: ${{ steps.my-artifact.outputs.artifact-id }}"}'
+        uses: johannes-huther/webhook.sh@v1
+        env:
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
+          webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+          data: '{"artifact-id: ${{ steps.my-artifact.outputs.artifact-id }}"}'
