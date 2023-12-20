@@ -4,13 +4,27 @@
     "http-methods": ["POST"],
     "execute-command": "/var/scripts/pull-site-changes.sh",
     "command-working-directory": "/var/www/communitea.life",
-    "response-message": "Hook triggered successfully.",
+    "response-message": "SUCCESS: Site contents refreshed.",
     "pass-environment-to-command": [
       {
         "source": "payload",
         "envname": "ARTIFACT_ID",
         "name": "data.artifact-id"
       }
-    ]
+    ],
+    "trigger-rule":
+    {
+      "match":
+      {
+        "type": "payload-hmac-sha1",
+        "secret": "<MY SECRET>",
+        "parameter":
+        {
+          "source": "header",
+          "name": "X-Hub-Signature"
+        }
+      }
+    },
+    "trigger-rule-mismatch-http-response-code": 401
   }
 ]
