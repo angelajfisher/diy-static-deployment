@@ -29,7 +29,7 @@ jobs:
           if-no-files-found: error
           retention-days: 1
   ping-server:
-    runs-on: composite
+    runs-on: ubuntu-latest
     steps:
       - name: Invoke Webhook
         uses: johannes-huther/webhook.sh@v1
