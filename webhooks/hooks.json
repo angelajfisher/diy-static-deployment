@@ -1,0 +1,15 @@
+[
+  {
+    "id": "pull-site-changes",
+    "execute-command": "/var/webhook/pull-site-changes.sh",
+    "command-working-directory": "/var/www/communitea.life",
+    "response-message": "Hook triggered successfully.",
+    "pass-environment-to-command": [
+      {
+        "source": "payload",
+        "envname": "ARTIFACT_ID",
+        "name": "artifact-id"
+      }
+    ]
+  }
+]

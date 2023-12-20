@@ -7,25 +7,33 @@ on:
 jobs:
   build-frontend:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
     outputs:
-      build-artifact: ${{ steps.my-artifact.outputs.artifact-id }}
+      artifact-id: ${{ steps.frontend-artifact.outputs.artifact-id }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            frontend
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
       - name: Install dependencies
         run: npm install
       - name: Build
         run: npm run build
       - name: Upload artifact
         uses: actions/upload-artifact@v4
-        id: artifact-upload-step
+        id: artifact-upload
         with:
-          path: './dist'
+          name: frontend-artifact
+          path: './frontend/dist'
           if-no-files-found: error
           retention-days: 1
   # release:
@@ -66,4 +74,4 @@ jobs:
         env:
           webhook_url: ${{ secrets.WEBHOOK_URL }}
           webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
-          data: '{"artifact-id": "${{ steps.my-artifact.outputs.artifact-id }}"}'
+          data: '{"artifact-id": "${{ needs.build-frontend.outputs.artifact-id }}"}'
