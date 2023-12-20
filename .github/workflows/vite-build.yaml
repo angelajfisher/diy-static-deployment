@@ -74,4 +74,4 @@ jobs:
         env:
           webhook_url: ${{ secrets.WEBHOOK_URL }}
           webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
-          data: '{"artifact-id": "${{ needs.build-frontend.outputs.artifact-id }}"}'
+          data: '{"artifact-id": "${{ needs.build-frontend.outputs.artifact-id }}", "needs-parity": true}'

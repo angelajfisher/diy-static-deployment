@@ -16,7 +16,7 @@ function App() {
           </button>
         </p>
         <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
+          This is a test page to indicate that CI/CD with GitHub has been set up. Enable the repo's workflow and the site will come to life!
         </p>
         <p>
           <a

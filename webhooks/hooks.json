@@ -10,20 +10,37 @@
         "source": "payload",
         "envname": "ARTIFACT_ID",
         "name": "data.artifact-id"
+      },
+      {
+        "source": "payload",
+        "envname": "NEEDS_PARITY",
+        "name": "data.needs-parity"
       }
     ],
     "trigger-rule":
     {
-      "match":
-      {
-        "type": "payload-hmac-sha1",
-        "secret": "<MY SECRET>",
-        "parameter":
+      "or":
+      [
         {
-          "source": "header",
-          "name": "X-Hub-Signature"
+          "match":
+          {
+            "type": "payload-hmac-sha1",
+            "secret": "<MY SECRET>",
+            "parameter":
+            {
+              "source": "header",
+              "name": "X-Hub-Signature"
+            }
+          }
+        },
+        {
+          "match":
+          {
+            "type": "ip-whitelist",
+            "ip-range": "172.16.4.106/24"
+          }
         }
-      }
+      ]
     },
     "trigger-rule-mismatch-http-response-code": 401
   }
