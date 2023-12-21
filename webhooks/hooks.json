@@ -37,7 +37,7 @@
           "match":
           {
             "type": "ip-whitelist",
-            "ip-range": "172.16.4.106/24"
+            "ip-range": "<LOCAL IP>/24"
           }
         }
       ]

@@ -28,6 +28,8 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build
+        env:
+          VITE_TEST: ${{ secrets.VITE_TEST }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         id: artifact-upload

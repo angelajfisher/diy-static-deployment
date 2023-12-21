@@ -4,6 +4,7 @@ import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const env_test = import.meta.env.VITE_TEST
 
   return (
     <div className="App">
@@ -17,7 +18,9 @@ function App() {
         </p>
         <p>
           This is a test page to indicate that CI/CD with GitHub has been set up. Enable the repo's workflow and the site will come to life!
+          {env_test ? <p>The env is working, too!</p> : <p>env not loaded</p>}
         </p>
+
         <p>
           <a
             className="App-link"
