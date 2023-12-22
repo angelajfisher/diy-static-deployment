@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import logo from './logo.svg'
 import './App.css'
+import { Link } from 'react-router-dom';
 
 function Home() {
   const [count, setCount] = useState(0)
@@ -16,6 +17,7 @@ function Home() {
             count is: {count}
           </button>
         </p>
+        <Link to='/test'>Test</Link>
         <p>
           This is a test page to indicate that CI/CD with GitHub has been set up. Enable the repo's workflow and the site will come to life!
           {env_test ? <p>The env is working, too!</p> : <p>env not loaded</p>}
