@@ -8,7 +8,7 @@ function App(): ReactElement {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/test" element={<Test />} />
+        <Route path="/test/test" element={<Test />} />
       </Routes>
     </Router>
   );
