@@ -17,7 +17,7 @@ network:
         - 192.168.1.<IP>/24
     ens224:
       addresses:
-        - 172.16.4.187/24
+        - 172.16.4.<IP>/24
       nameservers:
         addresses: [10.0.0.213,172.16.4.213,192.168.1.213]
       routes:
@@ -25,22 +25,25 @@ network:
           via: 172.16.4.2
   version: 2
 ```
+> **Note:** The IPs specified in this example may not match your network's configuration. Be sure to double check before applying changes.
+
 Then run `netplan apply` to put it into effect.
 
-Install apache2 and allow its ports (443 for https ; 80 for http)
+Install apache2 and allow its ports (443 for https; 80 for http):
 ```
 apt install apache2
 ufw allow Apache
-ufw alow Apache Secure
+ufw allow Apache Secure
 ufw allow <RELEVANT PORT>
 ```
 
-Upload SSL certs over FTP, then move them to their secure locations:
+Upload SSL cert files over FTP, then move them to their secure locations:
 ```
 mv <KEY>.key /etc/ssl/private/<KEY>.key
 mv <CERT>.crt /etc/ssl/certs/<CERT>.crt
 mv <BUNDLE>.crt /etc/ssl/certs/<BUNDLE>.crt
 ```
+> **Note:** The above example assumes your present working directory houses the FTP'ed files. Of course, you could always use absolute paths instead.
 
 Configure the Apache web server to work with SSL:
 `nano /etc/apache2/sites-available/<SITE NAME>.conf`
@@ -54,7 +57,7 @@ Configure the Apache web server to work with SSL:
 		DocumentRoot /var/www/<SITE NAME>/
 		SSLEngine on
 		SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1
-		SSLCipherSuite (note: is this unique or??? google this)
+		SSLCipherSuite
 
 		SSLCompression      off
 		SSLSessionTickets   off
@@ -91,7 +94,7 @@ a2enmod <SITE NAME>.conf
 systemctl reload apache2
 ```
 
-Set up the directory for the new site with `mkdir /var/www/<SITE NAME>`, then stick your site files in there are you're good to go!
+Set up the directory for the new site with `mkdir /var/www/<SITE NAME>`, then stick your site files in there and you're good to go!
 
 ## Server Config for SPAs (React Router)
 
@@ -108,7 +111,7 @@ Update site config (`/etc/apache2/sites-available/<SITE NAME>.conf`) with rewrit
 		DocumentRoot /var/www/<SITE NAME>/
 		SSLEngine on
 		SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1
-		SSLCipherSuite (note: is this unique or??? google this)
+		SSLCipherSuite
 
 		SSLCompression      off
 		SSLSessionTickets   off
@@ -127,7 +130,7 @@ Update site config (`/etc/apache2/sites-available/<SITE NAME>.conf`) with rewrit
 			Options -Indexes +FollowSymLinks
 		</Directory>
 
-##################### NEW CODE #######################
+######################### NEW CODE ###########################
 		<Directory /var/www/<SITE NAME>>
 			RewriteEngine on
 			RewriteCond %{REQUEST_FILENAME} -f [OR]
@@ -135,7 +138,7 @@ Update site config (`/etc/apache2/sites-available/<SITE NAME>.conf`) with rewrit
 			RewriteRule ^ - [L]
 			RewriteRule ^ index.html [L]
 		</Directory>
-######################################################
+##############################################################
 
 		BrowserMatch "MSIE [2-6]" \
 		nokeepalive ssl-unclean-shutdown \

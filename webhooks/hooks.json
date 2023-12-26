@@ -3,7 +3,7 @@
     "id": "pull-site-changes",
     "http-methods": ["POST"],
     "execute-command": "/var/scripts/pull-site-changes.sh",
-    "command-working-directory": "/var/www/communitea.life",
+    "command-working-directory": "/var/www/<SITE NAME>",
     "response-message": "SUCCESS: Site contents refreshed.",
     "pass-environment-to-command": [
       {
