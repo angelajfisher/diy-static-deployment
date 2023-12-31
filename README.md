@@ -1,5 +1,17 @@
 # CI/CD with Apache2
 
+## Table of Contents
+
+- [CI/CD with Apache2](#cicd-with-apache2)
+	- [Table of Contents](#table-of-contents)
+	- [Server Setup (with SSL)](#server-setup-with-ssl)
+	- [Server Config for SPAs (React Router)](#server-config-for-spas-react-router)
+		- [Instructions](#instructions)
+		- [Explanation](#explanation)
+	- [Apache2 Webhooks for CI/CD with GitHub](#apache2-webhooks-for-cicd-with-github)
+	- [Creating the GitHub Deployment Workflow](#creating-the-github-deployment-workflow)
+
+
 ## Server Setup (with SSL)
 
 Always start a new server off with `apt update` and `apt upgrade`
@@ -163,4 +175,34 @@ This implementation is client-side rendering instead of server-side rendering.
 
 ## Apache2 Webhooks for CI/CD with GitHub
 
-This section coming soon, but see the webhooks folder in the repo for an idea.
+> **Note:** These instructions are specifically for GitHub and will not work with a GitLab setup without significant modifications. At this time, I do not have specific instructions for GitLab pipelines. If that changes, it will be reflected here.
+
+To get started with webhooks on Ubuntu, install [webhook](https://github.com/adnanh/webhook) with `sudo apt-get install webhook`. The default port used for hooks is 9000, so the port will need to be made available on the firewall with the command `sudo ufw allow 9000`.
+
+All webhooks are custom and thus do not come pre-defined, so begin by creating the `hooks.json` file to instruct [webhook](https://github.com/adnanh/webhook) of the available hooks. By default, this file is expected to be located at `/var/webhook/hooks.json`, but this can be changed in the config.
+
+Copy the contents of this repository's `hooks.json` found in the `webhooks` folder [here](/webhooks/hooks.json) into your new file. Before saving, ensure that the variables \<encased in arrows\> are replaced with the correct values for your configuration. The `<LOCAL IP>` match case can be removed if you are not setting up redundant servers; otherwise, it should be set to the local IP of the twin server.
+
+> **Note:** The `<MY SECRET>` variable can be anything you'd like. It will be used to ensure that the webhook is only triggered by a trusted source.
+
+Before our hook is ready to listen to the public internet, we need to add the script it will be calling. Create a new file, `/var/scripts/pull-site-changes.sh` and copy the contents of this repository's [file of the same name](webhooks/pull-site-changes.sh). Again, remember to replace the variables \<encased in arrows\> before saving.
+
+You will need a GitHub classic token with read permissions to use in the script's curl request. It is **very** important that you test your setup thoroughly, as misuse of the GitHub API with your access token attached **will** get your account suspended. While safeguards have been implemented to prevent infinite loops between twin servers, always double check your setup and make any necessary changes to secure your account.
+
+A couple more action items before the webhook service can launch:
+- The script must also be converted into an executable with `sudo chmod -x /var/scripts/<SCRIPT NAME>.sh`.
+- `unzip` must be installed: `sudo apt-get install unzip`
+
+Now the webhook service can begin listening! Replace the variables \<enclosed in arrows\> with those from your setup and then run the following command:
+```
+webhook -hooks /var/webhook/hooks.json -secure -cert /etc/ssl/certs/<SSL CERT>.crt -key /etc/ssl/private/<SSL KEY>.key -ip <THIS SERVER'S IP> -verbose
+```
+> **Note:** If your `hooks.json` file is located in a different directory, specify that here. The `-verbose` flag is optional, but recommended for debugging at least.
+
+If you are setting up a pair of redundant web servers, repeat this process on both. Ensure the IPs in `hooks.json`, `pull-site-changes.sh`, and the webhook service startup command are altered correctly for each server.
+
+If you are **not** utilizing a twin-server setup, note that the `$AMOUNT` and `$NEEDS_PARITY` variables and their respective code blocks within the script will not be needed. Remove them if desired.
+
+## Creating the GitHub Deployment Workflow
+
+The explanation for this section is coming soon. However, it is a straightfoward process: check out the [workflow file](.github/workflows/vite-build.yaml) in this repository to get started.
