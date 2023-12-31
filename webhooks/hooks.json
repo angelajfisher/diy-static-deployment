@@ -15,6 +15,11 @@
         "source": "payload",
         "envname": "NEEDS_PARITY",
         "name": "data.needs-parity"
+      },
+      {
+        "source": "payload",
+        "envname": "ATTEMPT",
+        "name": "data.attempt"
       }
     ],
     "trigger-rule":
