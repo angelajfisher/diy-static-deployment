@@ -19,7 +19,7 @@ unzip -o "/var/www/build.zip"
 
 rm "/var/www/build.zip"
 
-if "$NEEDS_PARITY"; then
+if [ "$NEEDS_PARITY" = "true" ]; then
 curl -d "{\"data\": {\"artifact-id\": \"$ARTIFACT_ID\", \"needs-parity\": false}}" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
