@@ -185,12 +185,14 @@ Copy the contents of this repository's `hooks.json` found in the `webhooks` fold
 
 > **Note:** The `<MY SECRET>` variable can be anything you'd like. It will be used to ensure that the webhook is only triggered by a trusted source.
 
-Before our hook is ready to listen to the public internet, we need to add the script it will be calling. Create a new file, `/var/scripts/pull-site-changes.sh` and copy the contents of this repository's [file of the same name](webhooks/pull-site-changes.sh). Again, remember to replace the variables \<encased in arrows\> before saving.
+Before our hook is ready to listen to the public internet, we need to add the script(s) it will be calling. Create a new file, `/var/scripts/pull-site-changes.sh` and copy the contents of this repository's [file of the same name](webhooks/pull-site-changes.sh). Again, remember to replace the variables \<encased in arrows\> before saving.
+
+If you are utilizing a twin-server setup for redundancy, repeat this process with the `/var/scripts/reach-parity.sh` file [found here](webhooks/reach-parity.sh).
 
 You will need a GitHub classic token with read permissions to use in the script's curl request. It is **very** important that you test your setup thoroughly, as misuse of the GitHub API with your access token attached **will** get your account suspended. While safeguards have been implemented to prevent infinite loops between twin servers, always double check your setup and make any necessary changes to secure your account.
 
 A couple more action items before the webhook service can launch:
-- The script must also be converted into an executable with `sudo chmod -x /var/scripts/<SCRIPT NAME>.sh`.
+- All scripts must also be converted into executables with `sudo chmod -x /var/scripts/<SCRIPT NAME>.sh`.
 - `unzip` must be installed: `sudo apt-get install unzip`
 
 Now the webhook service can begin listening! Replace the variables \<enclosed in arrows\> with those from your setup and then run the following command:
@@ -201,7 +203,7 @@ webhook -hooks /var/webhook/hooks.json -secure -cert /etc/ssl/certs/<SSL CERT>.c
 
 If you are setting up a pair of redundant web servers, repeat this process on both. Ensure the IPs in `hooks.json`, `pull-site-changes.sh`, and the webhook service startup command are altered correctly for each server.
 
-If you are **not** utilizing a twin-server setup, note that the `$AMOUNT` and `$NEEDS_PARITY` variables and their respective code blocks within the script will not be needed. Remove them if desired.
+If you are **not** utilizing a twin-server setup, note that the additional curl request at the bottom of `pull-site-changes.sh` should be removed. Additionally, you will want to remove the reference to `reach-parity.sh` from `hooks.json` and instead only have the singular hook.
 
 ## Creating the GitHub Deployment Workflow
 
