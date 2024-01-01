@@ -1,20 +1,24 @@
-# CI/CD with Apache2
+# DIY Static Deployment with Apache2
+
+Looking to host your own web server instead of relying on GitHub or GitLab pages? This beginner-friendly tutorial provides step-by-step instructions for configuring a pair of redundant Apache web servers (though can also be used with a single-server setup, too) to utilize continuous deployment via GitHub. By relying on webhooks, the servers can be configured to pull changes safely and securely without the use of SSH over the public internet.
+
+> **Note:** This tutorial assumes you already have knowledge in configuring your local network, in standing up new Linux servers (eg. with VMWare), and optionally in setting up proxies for redundant servers.
 
 ## Table of Contents
 
-- [CI/CD with Apache2](#cicd-with-apache2)
+- [DIY Static Deployment with Apache2](#diy-static-deployment-with-apache2)
 	- [Table of Contents](#table-of-contents)
 	- [Server Setup (with SSL)](#server-setup-with-ssl)
 	- [Server Config for SPAs (React Router)](#server-config-for-spas-react-router)
 		- [Instructions](#instructions)
 		- [Explanation](#explanation)
-	- [Apache2 Webhooks for CI/CD with GitHub](#apache2-webhooks-for-cicd-with-github)
+	- [Apache2 Webhooks for CD with GitHub](#apache2-webhooks-for-cd-with-github)
 	- [Creating the GitHub Deployment Workflow](#creating-the-github-deployment-workflow)
 
 
 ## Server Setup (with SSL)
 
-Always start a new server off with `apt update` and `apt upgrade`
+Stand up a fresh Ubuntu server. Always start a new server off with `apt update` and `apt upgrade` to ensure everything is up to date before proceeding with the configuration.
 
 Give the server static IPs so they don't change between reboots:
 `/etc/netplan/00-installer-config.yaml`
@@ -173,13 +177,13 @@ That's where the Rewrite Engine comes in! The engine allows for Apache to serve 
 
 This implementation is client-side rendering instead of server-side rendering.
 
-## Apache2 Webhooks for CI/CD with GitHub
+## Apache2 Webhooks for CD with GitHub
 
-> **Note:** These instructions are specifically for GitHub and will not work with a GitLab setup without significant modifications. At this time, I do not have specific instructions for GitLab pipelines. If that changes, it will be reflected here.
+> **Note:** These instructions are specifically for GitHub and will not work with a GitLab setup without significant modifications. At this time, I do not have instructions for GitLab pipelines. If that changes, it will be reflected here.
 
 To get started with webhooks on Ubuntu, install [webhook](https://github.com/adnanh/webhook) with `sudo apt-get install webhook`. The default port used for hooks is 9000, so the port will need to be made available on the firewall with the command `sudo ufw allow 9000`.
 
-All webhooks are custom and thus do not come pre-defined, so begin by creating the `hooks.json` file to instruct [webhook](https://github.com/adnanh/webhook) of the available hooks. By default, this file is expected to be located at `/var/webhook/hooks.json`, but this can be changed in the config.
+No hooks come with the installation, so begin by creating the `hooks.json` file to instruct [webhook](https://github.com/adnanh/webhook) of the available hooks. By default, this file is expected to be located at `/var/webhook/hooks.json`, but this can be changed in the config.
 
 Copy the contents of this repository's `hooks.json` found in the `webhooks` folder [here](/webhooks/hooks.json) into your new file. Before saving, ensure that the variables \<encased in arrows\> are replaced with the correct values for your configuration. The `<LOCAL IP>` match case can be removed if you are not setting up redundant servers; otherwise, it should be set to the local IP of the twin server.
 
@@ -187,9 +191,9 @@ Copy the contents of this repository's `hooks.json` found in the `webhooks` fold
 
 Before our hook is ready to listen to the public internet, we need to add the script(s) it will be calling. Create a new file, `/var/scripts/pull-site-changes.sh` and copy the contents of this repository's [file of the same name](webhooks/pull-site-changes.sh). Again, remember to replace the variables \<encased in arrows\> before saving.
 
-If you are utilizing a twin-server setup for redundancy, repeat this process with the `/var/scripts/reach-parity.sh` file [found here](webhooks/reach-parity.sh).
+> **WARNING:** You will need a GitHub classic token with read permissions to use in the scripts' curl requests. It is **very** important that you test your setup thoroughly, as misuse of the GitHub API with your access token attached **will** get your account suspended. While safeguards have been implemented to prevent infinite loops between twin servers, always double check your setup and make any necessary changes to secure your account.
 
-You will need a GitHub classic token with read permissions to use in the script's curl request. It is **very** important that you test your setup thoroughly, as misuse of the GitHub API with your access token attached **will** get your account suspended. While safeguards have been implemented to prevent infinite loops between twin servers, always double check your setup and make any necessary changes to secure your account.
+If you are utilizing a twin-server setup for redundancy, repeat this process with the `/var/scripts/reach-parity.sh` file [found here](webhooks/reach-parity.sh).
 
 A couple more action items before the webhook service can launch:
 - All scripts must also be converted into executables with `sudo chmod -x /var/scripts/<SCRIPT NAME>.sh`.
