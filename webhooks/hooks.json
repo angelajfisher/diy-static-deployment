@@ -10,42 +10,43 @@
         "source": "payload",
         "envname": "ARTIFACT_ID",
         "name": "data.artifact-id"
-      },
-      {
-        "source": "payload",
-        "envname": "NEEDS_PARITY",
-        "name": "data.needs-parity"
-      },
-      {
-        "source": "payload",
-        "envname": "ATTEMPT",
-        "name": "data.attempt"
       }
     ],
     "trigger-rule":
     {
-      "or":
-      [
+      "match":
+      {
+        "type": "payload-hmac-sha1",
+        "secret": "<MY SECRET>",
+        "parameter":
         {
-          "match":
-          {
-            "type": "payload-hmac-sha1",
-            "secret": "<MY SECRET>",
-            "parameter":
-            {
-              "source": "header",
-              "name": "X-Hub-Signature"
-            }
-          }
-        },
-        {
-          "match":
-          {
-            "type": "ip-whitelist",
-            "ip-range": "<LOCAL IP>/24"
-          }
+          "source": "header",
+          "name": "X-Hub-Signature"
         }
-      ]
+      }
+    },
+    "trigger-rule-mismatch-http-response-code": 401
+  },
+  {
+    "id": "reach-parity",
+    "http-methods": ["POST"],
+    "execute-command": "/var/scripts/reach-parity.sh",
+    "command-working-directory": "/var/www/<SITE NAME>",
+    "response-message": "SUCCESS: Parity reached.",
+    "pass-environment-to-command": [
+      {
+        "source": "payload",
+        "envname": "ARTIFACT_ID",
+        "name": "data.artifact-id"
+      }
+    ],
+    "trigger-rule":
+    {
+      "match":
+      {
+        "type": "ip-whitelist",
+        "ip-range": "<LOCAL IP>/24"
+      }
     },
     "trigger-rule-mismatch-http-response-code": 401
   }

@@ -9,11 +9,14 @@ RESPONSE=$(curl -w "${response_code}" -L -o "/var/www/build.zip" \
   "https://api.github.com/repos/angelajfisher/static-deployment-test/actions/artifacts/$ARTIFACT_ID/zip")
 
 if [ "$RESPONSE" != "200" ]; then
-  echo "ABORTING: Code $RESPONSE received from curl request."
+  echo "ERROR - SHUTTING DOWN: Code $RESPONSE received from curl request. Parity cannot be acheived, so the server is shutting down."
+
+  systemctl stop apache2
+
   exit 1
 fi
 
-systemctl stop apache2
+systemctl stop apache2 || true
 
 rm -r -- * || true
 
@@ -22,8 +25,3 @@ unzip -o "/var/www/build.zip"
 systemctl start apache2
 
 rm "/var/www/build.zip"
-
-curl -d "{\"data\": {\"artifact-id\": \"$ARTIFACT_ID\"}" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
-  -k "https://<LOCAL IP>:9000/hooks/reach-parity"
