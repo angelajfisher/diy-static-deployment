@@ -196,7 +196,7 @@ Before our hook is ready to listen to the public internet, we need to add the sc
 If you are utilizing a twin-server setup for redundancy, repeat this process with the `/var/scripts/reach-parity.sh` file [found here](webhooks/reach-parity.sh).
 
 A couple more action items before the webhook service can launch:
-- All scripts must also be converted into executables with `sudo chmod -x /var/scripts/<SCRIPT NAME>.sh`.
+- All scripts must also be converted into executables with `sudo chmod +x /var/scripts/<SCRIPT NAME>.sh`.
 - `unzip` must be installed: `sudo apt-get install unzip`
 
 Now the webhook service can begin listening! Replace the variables \<enclosed in arrows\> with those from your setup and then run the following command:
