@@ -23,7 +23,7 @@ systemctl start apache2
 
 rm "/var/www/build.zip"
 
-curl -d "{\"data\": {\"artifact-id\": \"$ARTIFACT_ID\"}" \
+curl -d "{\"data\": {\"artifact-id\": \"$ARTIFACT_ID\"}}" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -k "https://<LOCAL IP>:9000/hooks/reach-parity"

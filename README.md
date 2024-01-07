@@ -203,7 +203,7 @@ Now the webhook service can begin listening! Replace the variables \<enclosed in
 ```
 webhook -hooks /var/webhook/hooks.json -secure -cert /etc/ssl/certs/<SSL CERT>.crt -key /etc/ssl/private/<SSL KEY>.key -ip <THIS SERVER'S IP> -verbose
 ```
-> **Note:** If your `hooks.json` file is located in a different directory, specify that here. The `-verbose` flag is optional, but recommended for debugging at least.
+> **Note:** If your `hooks.json` file is located in a different directory, specify that here. The `-verbose` flag is, of course, optional.
 
 If you are setting up a pair of redundant web servers, repeat this process on both. Ensure the IPs in `hooks.json`, `pull-site-changes.sh`, and the webhook service startup command are altered correctly for each server.
 
